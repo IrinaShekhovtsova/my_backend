@@ -15,14 +15,22 @@ using Microsoft.EntityFrameworkCore;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.IdentityModel.Tokens;
 using Shekhovtsova_backend.Models;
+using Shekhovtsova_backend.Interfaces;
+using Shekhovtsova_backend.Services;
 
 namespace Shekhovtsova_backend
 {
     public class Startup
     {
+        public ICountry CountryService { get; private set; }
+        public IEnergyCard EnergyCardService { get; private set; }
+
+        public AuthContext context { get; }
         public Startup(IConfiguration configuration)
         {
             Configuration = configuration;
+            CountryService = new CountryService(context);
+            EnergyCardService = new EnergyCardService(context) ;
         }
 
         public IConfiguration Configuration { get; }
@@ -52,6 +60,8 @@ namespace Shekhovtsova_backend
             services.AddDbContext<AuthContext>(options =>
     options.UseSqlServer(Configuration.GetConnectionString("AuthContext")));
 
+            services.AddScoped(typeof(ICountry), typeof(CountryService));
+            services.AddScoped(typeof(IEnergyCard), typeof(EnergyCardService));
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.

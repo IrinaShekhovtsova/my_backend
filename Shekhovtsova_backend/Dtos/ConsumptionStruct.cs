@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 
-namespace Shekhovtsova_backend.Models
+namespace Shekhovtsova_backend.Dtos
 {
     public class ConsumptionStruct
     {

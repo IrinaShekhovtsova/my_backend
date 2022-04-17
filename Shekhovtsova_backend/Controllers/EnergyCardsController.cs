@@ -5,6 +5,7 @@ using System.Threading.Tasks;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
+using Shekhovtsova_backend.Interfaces;
 using Shekhovtsova_backend.Models;
 
 namespace Shekhovtsova_backend.Controllers
@@ -14,94 +15,65 @@ namespace Shekhovtsova_backend.Controllers
     public class EnergyCardsController : ControllerBase
     {
         private readonly AuthContext _context;
+        private readonly IEnergyCard cardService;
 
-        public EnergyCardsController(AuthContext context)
+        public EnergyCardsController(AuthContext context, IEnergyCard service)
         {
             _context = context;
+            cardService = service;
         }
 
         // GET: api/EnergyCards
         [HttpGet]
-        public async Task<ActionResult<IEnumerable<EnergyCard>>> GetEnergyCards()
+        public List<EnergyCard> GetEnergyCards()
         {
-            return await _context.EnergyCards.ToListAsync();
+            return cardService.GetEnergyCards().ToList();
         }
 
         // GET: api/EnergyCards/5
         [HttpGet("{id}")]
-        public async Task<ActionResult<EnergyCard>> GetEnergyCard(int id)
+        public IActionResult GetEnergyCard(int id)
         {
-            var energyCard = await _context.EnergyCards.FindAsync(id);
+            var energyCard = cardService.GetEnergyCard(id);
 
             if (energyCard == null)
             {
                 return NotFound();
             }
 
-            return energyCard;
+            return Ok(energyCard);
         }
 
         // PUT: api/EnergyCards/5
-        // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
         [HttpPut("{id}")]
-        public async Task<IActionResult> PutEnergyCard(int id, EnergyCard energyCard)
+        public IActionResult PutEnergyCard(int id, [FromForm]EnergyCard energyCard)
         {
-            if (id != energyCard.EnergyCardID)
+            if (!cardService.UpdateEnergyCard(id, energyCard))
             {
                 return BadRequest();
             }
-
-            _context.Entry(energyCard).State = EntityState.Modified;
-
-            try
-            {
-                await _context.SaveChangesAsync();
-            }
-            catch (DbUpdateConcurrencyException)
-            {
-                if (!EnergyCardExists(id))
-                {
-                    return NotFound();
-                }
-                else
-                {
-                    throw;
-                }
-            }
-
-            return NoContent();
+            else return Ok(energyCard);
         }
 
         // POST: api/EnergyCards
         // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
         [HttpPost]
-        public async Task<ActionResult<EnergyCard>> PostEnergyCard([FromForm]EnergyCard energyCard)
+        public IActionResult PostEnergyCard([FromForm]EnergyCard energyCard)
         {
-            _context.EnergyCards.Add(energyCard);
-            await _context.SaveChangesAsync();
-
-            return CreatedAtAction("GetEnergyCard", new { id = energyCard.EnergyCardID }, energyCard);
+            if (!cardService.AddEnergyCard(energyCard))
+                return NotFound();
+            else return Ok(energyCard);
         }
 
         // DELETE: api/EnergyCards/5
         [HttpDelete("{id}")]
-        public async Task<IActionResult> DeleteEnergyCard(int id)
+        public IActionResult DeleteEnergyCard(int id)
         {
-            var energyCard = await _context.EnergyCards.FindAsync(id);
-            if (energyCard == null)
-            {
+            if (!cardService.DeleteEnergyCard(id))
                 return NotFound();
-            }
-
-            _context.EnergyCards.Remove(energyCard);
-            await _context.SaveChangesAsync();
-
-            return NoContent();
+            else return Ok();
         }
 
-        private bool EnergyCardExists(int id)
-        {
-            return _context.EnergyCards.Any(e => e.EnergyCardID == id);
-        }
+        
     }
 }

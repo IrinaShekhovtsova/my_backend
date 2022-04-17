@@ -6,7 +6,9 @@ using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using Shekhovtsova_backend.Models;
-
+using Shekhovtsova_backend.Dtos;
+using Shekhovtsova_backend.Services;
+using Shekhovtsova_backend.Interfaces;
 namespace Shekhovtsova_backend.Controllers
 {
     [Route("api/[controller]")]
@@ -14,17 +16,19 @@ namespace Shekhovtsova_backend.Controllers
     public class CountriesController : ControllerBase
     {
         private readonly AuthContext _context;
+        private readonly ICountry countryService;
 
-        public CountriesController(AuthContext context)
+        public CountriesController(AuthContext context, ICountry service)
         {
             _context = context;
+            countryService = service;
         }
 
         // GET: api/Countries
         [HttpGet]
-        public async Task<ActionResult<IEnumerable<Country>>> GetCountries()
+        public List<Country> GetCountryList()
         {
-            return await _context.Countries.ToListAsync();
+            return countryService.GetCountries().ToList();
         }
 
         // GET: api/Countries/WithCards
@@ -50,45 +54,19 @@ namespace Shekhovtsova_backend.Controllers
 
         // GET: api/Countries/consumptionstructure/4
         [HttpGet("consumptionstructure/{id}")]
-        public ConsumptionStruct GetConsumptionStructure(int id)
+        public IActionResult GetConsumptionStructure(int id)
         {
-
-            ConsumptionStruct str = _context.Countries
-                .Where(c => c.CountryID == id)
-                .Select(c => c.EnergyBalance)
-                .Select(ec => new ConsumptionStruct
-                {
-                    TotalConsumption = ec.Sum(ec => ec.Consumption),
-                    Oil = ec.Where(ec => ec.EnergyID == 1).Select(ec => ec.Consumption).FirstOrDefault(),
-                    Gas = ec.Where(ec => ec.EnergyID == 2).Select(ec => ec.Consumption).FirstOrDefault(),
-                    Coal = ec.Where(ec => ec.EnergyID == 3).Select(ec => ec.Consumption).FirstOrDefault()
-                }).FirstOrDefault();
-
-            return str;
+            if (countryService.CountryExists(id))
+                return Ok(countryService.GetConsumptionStructure(id));
+            else return NotFound();
         }
 
         // GET: api/Countries/Exporters/1
-        [HttpGet("exporters/{id}")]
-        public List<CountryActivity> GetExporters(int id)
+        [HttpGet("exporters/{type}")]
+        public List<CountryActivity> GetExporters(EnergyType type)
         {
-
-            List<Country> countries = _context.Countries
-                .Include(c => c.EnergyBalance)
-                .ToList();
-
-            Energy e = _context.Energies.Where(e => e.EnergyID == id).FirstOrDefault();
-
-            List<CountryActivity> exp = countries.Where(c => c.IsExporter(e))
-                .Select(c => new CountryActivity
-                {
-                    Name = c.Name,
-                    Value = c.EnergyBalance.Where(ec => ec.EnergyID == id).Select(ec => ec.Production).FirstOrDefault()
-                     - c.EnergyBalance.Where(ec => ec.EnergyID == id).Select(ec => ec.Consumption).FirstOrDefault()
-                }
-                ).OrderByDescending(c => c.Value).ToList();
-
-
-            return exp;
+            return countryService.GetExporters(type).ToList();
+            
         }
 
         // GET: api/Countries/Importers/1
@@ -164,34 +142,34 @@ namespace Shekhovtsova_backend.Controllers
 
         // PUT: api/Countries/5
         // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
-        [HttpPut("{id}")]
-        public async Task<IActionResult> PutCountry(int id, Country country)
-        {
-            if (id != country.CountryID)
-            {
-                return BadRequest();
-            }
+        //[HttpPut("{id}")]
+        //public async Task<IActionResult> PutCountry(int id, Country country)
+        //{
+        //    if (id != country.CountryID)
+        //    {
+        //        return BadRequest();
+        //    }
 
-            _context.Entry(country).State = EntityState.Modified;
+        //    _context.Entry(country).State = EntityState.Modified;
 
-            try
-            {
-                await _context.SaveChangesAsync();
-            }
-            catch (DbUpdateConcurrencyException)
-            {
-                if (!CountryExists(id))
-                {
-                    return NotFound();
-                }
-                else
-                {
-                    throw;
-                }
-            }
+        //    try
+        //    {
+        //        await _context.SaveChangesAsync();
+        //    }
+        //    catch (DbUpdateConcurrencyException)
+        //    {
+        //        if (!CountryExists(id))
+        //        {
+        //            return NotFound();
+        //        }
+        //        else
+        //        {
+        //            throw;
+        //        }
+        //    }
 
-            return NoContent();
-        }
+        //    return NoContent();
+        //}
 
         // POST: api/Countries
         [HttpPost]
@@ -219,9 +197,9 @@ namespace Shekhovtsova_backend.Controllers
             return NoContent();
         }
 
-        private bool CountryExists(int id)
-        {
-            return _context.Countries.Any(e => e.CountryID == id);
-        }
+        //private bool CountryExists(int id)
+        //{
+        //    return _context.Countries.Any(e => e.CountryID == id);
+        //}
     }
 }
