@@ -12,23 +12,27 @@ namespace Shekhovtsova_backend.Interfaces
         
         public IEnumerable<Country> GetCountries();
 
-        //public Country GetCountry(int id);
-
-        
+        public Country GetCountry(int id);
 
         public ConsumptionStruct GetConsumptionStructure(int id);
 
+        public IEnumerable<CountryWithCards> GetCountriesWithCards();
+
+        public CountryWithCards GetCountryWithCards(int id);
+
         public IEnumerable<CountryActivity> GetExporters(EnergyType type);
 
-        //public IEnumerable<CountryActivity> GetImporters(Energy e);
+        public IEnumerable<CountryActivity> GetImporters(EnergyType e);
 
         //get dirty countries 
 
         public bool CountryExists(int id);
 
-        //public bool DeleteCountry(int id);
+        public bool DeleteCountry(int id);
 
-        //public Country AddCountry(Country country);
+        public bool AddCountry(Country country);
+
+        public Country GetCountrybyName(string name);
 
         //public Country UpdateCountry(Country country, int id);
 

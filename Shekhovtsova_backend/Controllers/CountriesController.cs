@@ -31,25 +31,39 @@ namespace Shekhovtsova_backend.Controllers
             return countryService.GetCountries().ToList();
         }
 
+        // GET: api/Countries/ByName/Australia
+        [HttpGet("byname/{name}")]
+        public IActionResult GetCountryByName(string name)
+        {
+            var country = countryService.GetCountrybyName(name);
+
+            if (country == null)
+            {
+                return NotFound();
+            }
+
+            return Ok(country);
+        }
+
+        // GET: api/Countries/WithCards/3
+        [HttpGet("withcards/{id}")]
+        public IActionResult GetCountryWithCards(int id)
+        {
+            var countryWithCards = countryService.GetCountryWithCards(id);
+
+            if (countryWithCards == null)
+            {
+                return NotFound();
+            }
+
+            return Ok(countryWithCards);
+        }
+
         // GET: api/Countries/WithCards
         [HttpGet("withcards")]
-        public object GetCards()
+        public List<CountryWithCards> GetCountriesWithCards()
         {
-            var trial = _context.Countries
-                .Select(c => new
-                {
-                    id = c.CountryID,
-                    name = c.Name,
-                    balance = c.EnergyBalance.Select(b => new
-                    {
-                        eid = b.EnergyID,
-                        cons = b.Consumption,
-                        prod = b.Production
-                    }).ToList()
-
-                })
-                .ToList();
-            return trial;
+            return countryService.GetCountriesWithCards().ToList();
         }
 
         // GET: api/Countries/consumptionstructure/4
@@ -70,30 +84,11 @@ namespace Shekhovtsova_backend.Controllers
         }
 
         // GET: api/Countries/Importers/1
-        [HttpGet("importers/{id}")]
-        public List<CountryActivity> GetImporters(int id)
+        [HttpGet("importers/{type}")]
+        public List<CountryActivity> GetImporters(EnergyType type)
         {
-
-            List<Country> countries = _context.Countries
-                .Include(c => c.EnergyBalance)
-                .ToList();
-
-            Energy e = _context.Energies.Where(e => e.EnergyID == id).FirstOrDefault();
-
-            List<CountryActivity> imp = countries.Where(c => c.IsImporter(e))
-                .Select(c => new CountryActivity
-                {
-                    Name = c.Name,
-                    Value = c.EnergyBalance.Where(ec => ec.EnergyID == id).Select(ec => ec.Consumption).FirstOrDefault()
-                     - c.EnergyBalance.Where(ec => ec.EnergyID == id).Select(ec => ec.Production).FirstOrDefault()
-                }
-                ).OrderByDescending(c => c.Value).ToList();
-
-
-            return imp;
+            return countryService.GetImporters(type).ToList();
         }
-
-
 
 
         // GET: api/Countries/dirty
@@ -140,10 +135,10 @@ namespace Shekhovtsova_backend.Controllers
 
 
 
-        // PUT: api/Countries/5
-        // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
+        //PUT: api/Countries/5
+        
         //[HttpPut("{id}")]
-        //public async Task<IActionResult> PutCountry(int id, Country country)
+        //public async Task<IActionResult> PutCountry(int id, [FromForm]Country country)
         //{
         //    if (id != country.CountryID)
         //    {
@@ -152,54 +147,32 @@ namespace Shekhovtsova_backend.Controllers
 
         //    _context.Entry(country).State = EntityState.Modified;
 
-        //    try
-        //    {
-        //        await _context.SaveChangesAsync();
-        //    }
-        //    catch (DbUpdateConcurrencyException)
-        //    {
-        //        if (!CountryExists(id))
-        //        {
-        //            return NotFound();
-        //        }
-        //        else
-        //        {
-        //            throw;
-        //        }
-        //    }
+            
+        //    await _context.SaveChangesAsync();
+            
 
         //    return NoContent();
         //}
 
         // POST: api/Countries
         [HttpPost]
-        public async Task<ActionResult<Country>> PostCountry([FromForm]Country country)
+        public IActionResult PostCountry([FromForm]Country country)
         {
-            _context.Countries.Add(country);
-            await _context.SaveChangesAsync();
+            if (!countryService.AddCountry(country)) 
+                return NotFound();
+            else return Ok(country);
 
-            return CreatedAtAction("GetCountry", new { id = country.CountryID }, country);
         }
 
         // DELETE: api/Countries/5
         [HttpDelete("{id}")]
-        public async Task<IActionResult> DeleteCountry(int id)
+        public IActionResult DeleteCountry(int id)
         {
-            var country = await _context.Countries.FindAsync(id);
-            if (country == null)
-            {
+            if (!countryService.DeleteCountry(id))
                 return NotFound();
-            }
-
-            _context.Countries.Remove(country);
-            await _context.SaveChangesAsync();
-
-            return NoContent();
+            else return Ok();
         }
 
-        //private bool CountryExists(int id)
-        //{
-        //    return _context.Countries.Any(e => e.CountryID == id);
-        //}
+        
     }
 }
