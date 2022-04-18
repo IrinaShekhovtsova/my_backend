@@ -5,12 +5,12 @@ using System.Threading.Tasks;
 using System.Security.Cryptography;
 using System.Text;
 
-namespace Shekhovtsova_backend.Models
+namespace Shekhovtsova_backend.Dtos
 {
     public class LoginData
     {
         public string login { get; set; }
-        //  public string password { get; set; }
+        //public string password { get; set; }
 
         private byte[] password;
         public string Password

@@ -25,12 +25,15 @@ namespace Shekhovtsova_backend
         public ICountry CountryService { get; private set; }
         public IEnergyCard EnergyCardService { get; private set; }
 
+        public IUser UserService { get; private set; }
+
         public AuthContext context { get; }
         public Startup(IConfiguration configuration)
         {
             Configuration = configuration;
             CountryService = new CountryService(context);
-            EnergyCardService = new EnergyCardService(context) ;
+            EnergyCardService = new EnergyCardService(context);
+            UserService = new UserService(context);
         }
 
         public IConfiguration Configuration { get; }
@@ -62,6 +65,7 @@ namespace Shekhovtsova_backend
 
             services.AddScoped(typeof(ICountry), typeof(CountryService));
             services.AddScoped(typeof(IEnergyCard), typeof(EnergyCardService));
+            services.AddScoped(typeof(IUser), typeof(UserService));
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.

@@ -9,6 +9,8 @@ using Shekhovtsova_backend.Models;
 using Shekhovtsova_backend.Dtos;
 using Shekhovtsova_backend.Services;
 using Shekhovtsova_backend.Interfaces;
+using Microsoft.AspNetCore.Authorization;
+
 namespace Shekhovtsova_backend.Controllers
 {
     [Route("api/[controller]")]
@@ -45,6 +47,7 @@ namespace Shekhovtsova_backend.Controllers
             return Ok(country);
         }
 
+        [Authorize]
         // GET: api/Countries/WithCards/3
         [HttpGet("withcards/{id}")]
         public IActionResult GetCountryWithCards(int id)
@@ -59,6 +62,7 @@ namespace Shekhovtsova_backend.Controllers
             return Ok(countryWithCards);
         }
 
+        [Authorize]
         // GET: api/Countries/WithCards
         [HttpGet("withcards")]
         public List<CountryWithCards> GetCountriesWithCards()
@@ -66,6 +70,7 @@ namespace Shekhovtsova_backend.Controllers
             return countryService.GetCountriesWithCards().ToList();
         }
 
+        [Authorize]
         // GET: api/Countries/consumptionstructure/4
         [HttpGet("consumptionstructure/{id}")]
         public IActionResult GetConsumptionStructure(int id)
@@ -75,6 +80,7 @@ namespace Shekhovtsova_backend.Controllers
             else return NotFound();
         }
 
+        [Authorize]
         // GET: api/Countries/Exporters/1
         [HttpGet("exporters/{type}")]
         public List<CountryActivity> GetExporters(EnergyType type)
@@ -83,60 +89,32 @@ namespace Shekhovtsova_backend.Controllers
             
         }
 
+        [Authorize]
         // GET: api/Countries/Importers/1
         [HttpGet("importers/{type}")]
         public List<CountryActivity> GetImporters(EnergyType type)
         {
             return countryService.GetImporters(type).ToList();
         }
-
-
-        // GET: api/Countries/dirty
-        //[HttpGet("dirty")]
-        //public object GetDirty()
-        //{
-
-        //    List<Country> countries = _context.Countries
-        //        .Include(c => c.EnergyBalance)
-        //        .Include(c => c.EnergyBalance.Select(b => b.Energy))
-        //        .ToList();
-
-
-
-        //    var em = countries.Select(c => c.EnergyBalance
-        //    .Where(ec => !ec.Energy.IsGreen)
-        //    .Select(ec => new
-        //    {
-        //        ener = ec.Energy.Type,
-        //        cons = ec.Consumption
-        //    }).ToList()).ToList();
-
-
-
-
-        //    return em;
-        //}
+    
 
 
         // GET: api/Countries/5
         [HttpGet("{id}")]
-        public async Task<ActionResult<Country>> GetCountry(int id)
+        public IActionResult GetCountry(int id)
         {
-            var country = await _context.Countries.FindAsync(id);
+            var country = countryService.GetCountry(id);
 
             if (country == null)
             {
                 return NotFound();
             }
 
-            return country;
+            return Ok(country);
         }
 
-
-
-
         //PUT: api/Countries/5
-        
+
         //[HttpPut("{id}")]
         //public async Task<IActionResult> PutCountry(int id, [FromForm]Country country)
         //{
@@ -147,13 +125,14 @@ namespace Shekhovtsova_backend.Controllers
 
         //    _context.Entry(country).State = EntityState.Modified;
 
-            
+
         //    await _context.SaveChangesAsync();
-            
+
 
         //    return NoContent();
         //}
 
+        [Authorize(Roles = "admin")]
         // POST: api/Countries
         [HttpPost]
         public IActionResult PostCountry([FromForm]Country country)
@@ -164,6 +143,7 @@ namespace Shekhovtsova_backend.Controllers
 
         }
 
+        [Authorize(Roles = "admin")]
         // DELETE: api/Countries/5
         [HttpDelete("{id}")]
         public IActionResult DeleteCountry(int id)

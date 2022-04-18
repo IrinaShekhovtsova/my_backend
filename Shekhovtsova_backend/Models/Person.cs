@@ -28,7 +28,5 @@ namespace Shekhovtsova_backend.Models
             set { password = Encoding.UTF8.GetBytes(value); }
         }
 
-
-
     }
 }

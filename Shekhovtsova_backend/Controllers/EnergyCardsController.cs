@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
@@ -55,6 +56,7 @@ namespace Shekhovtsova_backend.Controllers
             else return Ok(energyCard);
         }
 
+        [Authorize(Roles = "admin")]
         // POST: api/EnergyCards
         // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
         [HttpPost]
@@ -65,6 +67,7 @@ namespace Shekhovtsova_backend.Controllers
             else return Ok(energyCard);
         }
 
+        [Authorize(Roles = "admin")]
         // DELETE: api/EnergyCards/5
         [HttpDelete("{id}")]
         public IActionResult DeleteEnergyCard(int id)

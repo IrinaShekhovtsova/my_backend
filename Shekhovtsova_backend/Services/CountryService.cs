@@ -12,7 +12,6 @@ namespace Shekhovtsova_backend.Services
     public class CountryService : ICountry
     {
         private readonly AuthContext _context;
-        private readonly IEnergyCard cardService;
 
         public CountryService(AuthContext context)
         {
@@ -90,27 +89,6 @@ namespace Shekhovtsova_backend.Services
         {
             return _context.Countries.Where(c => c.Name == name).FirstOrDefault();
         }
-
-
-
-        //public CountryWithCards AddCountryWithCards(CountryAddition country)
-        //{
-        //    Country newcountry = new Country();
-        //    newcountry.Name = newcountry.Name;
-        //    newcountry.Region = newcountry.Region;
-        //    AddCountry(newcountry);
-
-        //    int cid = GetCountrybyName(country.Name).CountryID;
-        //    int eid1 = _context.Energies.Where(e => e.Type == country.Type1).Select(e => e.EnergyID).FirstOrDefault();
-        //    int eid2 = _context.Energies.Where(e => e.Type == country.Type2).Select(e => e.EnergyID).FirstOrDefault();
-        //    int eid3 = _context.Energies.Where(e => e.Type == country.Type3).Select(e => e.EnergyID).FirstOrDefault();
-
-        //    EnergyCard newcard = new EnergyCard();
-        //    newcard.EnergyID = 
-
-        //}
-        
-
 
         public IEnumerable<CountryActivity> GetExporters(EnergyType type)
         {
