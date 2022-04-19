@@ -34,7 +34,7 @@ namespace Shekhovtsova_backend.Interfaces
 
         public Country GetCountrybyName(string name);
 
-        //public Country UpdateCountry(Country country, int id);
+        public bool UpdateCountry(Country country, int id);
 
 
     }

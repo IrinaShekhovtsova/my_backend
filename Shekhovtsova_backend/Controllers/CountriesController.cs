@@ -115,22 +115,16 @@ namespace Shekhovtsova_backend.Controllers
 
         //PUT: api/Countries/5
 
-        //[HttpPut("{id}")]
-        //public async Task<IActionResult> PutCountry(int id, [FromForm]Country country)
-        //{
-        //    if (id != country.CountryID)
-        //    {
-        //        return BadRequest();
-        //    }
+        [HttpPut("{id}")]
+        public IActionResult PutCountry(int id, [FromForm] Country country)
+        {
+            if (!countryService.UpdateCountry(country, id))
+            {
+                return BadRequest();
+            }
+            else return Ok(country);
+        }
 
-        //    _context.Entry(country).State = EntityState.Modified;
-
-
-        //    await _context.SaveChangesAsync();
-
-
-        //    return NoContent();
-        //}
 
         [Authorize(Roles = "admin")]
         // POST: api/Countries

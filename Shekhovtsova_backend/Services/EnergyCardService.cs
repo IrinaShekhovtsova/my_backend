@@ -20,9 +20,8 @@ namespace Shekhovtsova_backend.Services
 
         public bool AddEnergyCard(EnergyCard energyCard)
         {
-            //проверить что страна существует
-
-            _context.EnergyCards.Add(energyCard);
+            if(_context.Countries.Find(energyCard.CountryID) is not null)
+                _context.EnergyCards.Add(energyCard);
             return _context.SaveChanges() > 0;
         }
 
@@ -33,13 +32,15 @@ namespace Shekhovtsova_backend.Services
 
         public bool UpdateEnergyCard(int id, EnergyCard energyCard)
         {
-            // не работает
             if (id != energyCard.EnergyCardID) return false;
 
             var ec = GetEnergyCard(id);
             if (ec is null) return false;
 
-            _context.Entry(energyCard).State = EntityState.Modified;
+            ec.EnergyID = energyCard.EnergyID;
+            ec.CountryID = energyCard.CountryID;
+            ec.Consumption = energyCard.Consumption;
+            ec.Production = energyCard.Production;
 
             return _context.SaveChanges() > 0;
         }

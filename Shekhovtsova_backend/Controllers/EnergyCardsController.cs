@@ -47,7 +47,7 @@ namespace Shekhovtsova_backend.Controllers
 
         // PUT: api/EnergyCards/5
         [HttpPut("{id}")]
-        public IActionResult PutEnergyCard(int id, [FromForm]EnergyCard energyCard)
+        public IActionResult PutEnergyCard(int id, [FromForm] EnergyCard energyCard)
         {
             if (!cardService.UpdateEnergyCard(id, energyCard))
             {

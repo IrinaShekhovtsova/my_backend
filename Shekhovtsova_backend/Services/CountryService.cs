@@ -147,5 +147,18 @@ namespace Shekhovtsova_backend.Services
             _context.Countries.Add(country);
             return _context.SaveChanges() > 0;
         }
+
+        public bool UpdateCountry(Country country, int id)
+        {
+            if (id != country.CountryID) return false;
+
+            var c = GetCountry(id);
+            if (c is null) return false;
+
+            c.Name = country.Name;
+            c.Region = country.Region;
+
+            return _context.SaveChanges() > 0;
+        }
     }
 }

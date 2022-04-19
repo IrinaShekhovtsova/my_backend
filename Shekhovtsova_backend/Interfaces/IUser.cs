@@ -11,7 +11,6 @@ namespace Shekhovtsova_backend.Interfaces
     public interface IUser
     {
         public bool AddUser(Person person);
-        public bool UpdateEnergyCard(int id, Person person);
 
         public bool UserAlreadyExists(string login);
 

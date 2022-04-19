@@ -23,17 +23,7 @@ namespace Shekhovtsova_backend.Services
             if(!UserAlreadyExists(person.Login)) _context.Persons.Add(person);
             return _context.SaveChanges() > 0;
         }
-        public bool UpdateEnergyCard(int id, Person person)
-        {
-            // не работает
-            if (id != person.PersonID) return false;
-
-            if (_context.Persons.Find(id) is null) return false;
-
-            _context.Entry(person).State = EntityState.Modified;
-
-            return _context.SaveChanges() > 0;
-        }
+        
 
         public bool UserAlreadyExists(string login)
         {
