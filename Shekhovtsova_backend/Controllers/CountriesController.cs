@@ -71,6 +71,14 @@ namespace Shekhovtsova_backend.Controllers
         }
 
         [Authorize]
+        // GET: api/Countries/Dirty
+        [HttpGet("dirty")]
+        public List<DirtyCountry> GetCountriesDirty()
+        {
+            return countryService.GetDirtyCountries().ToList();
+        }
+
+        [Authorize]
         // GET: api/Countries/consumptionstructure/4
         [HttpGet("consumptionstructure/{id}")]
         public IActionResult GetConsumptionStructure(int id)
@@ -113,8 +121,8 @@ namespace Shekhovtsova_backend.Controllers
             return Ok(country);
         }
 
+        [Authorize(Roles = "admin")]
         //PUT: api/Countries/5
-
         [HttpPut("{id}")]
         public IActionResult PutCountry(int id, [FromForm] Country country)
         {

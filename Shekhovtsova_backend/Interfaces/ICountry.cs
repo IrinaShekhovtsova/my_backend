@@ -36,6 +36,8 @@ namespace Shekhovtsova_backend.Interfaces
 
         public bool UpdateCountry(Country country, int id);
 
+        public IEnumerable<DirtyCountry> GetDirtyCountries();
+
 
     }
 }

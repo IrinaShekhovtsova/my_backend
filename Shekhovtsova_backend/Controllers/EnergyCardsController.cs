@@ -45,6 +45,7 @@ namespace Shekhovtsova_backend.Controllers
             return Ok(energyCard);
         }
 
+        [Authorize(Roles = "admin")]
         // PUT: api/EnergyCards/5
         [HttpPut("{id}")]
         public IActionResult PutEnergyCard(int id, [FromForm] EnergyCard energyCard)

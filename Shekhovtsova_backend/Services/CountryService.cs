@@ -160,5 +160,26 @@ namespace Shekhovtsova_backend.Services
 
             return _context.SaveChanges() > 0;
         }
+
+
+        public IEnumerable<DirtyCountry> GetDirtyCountries()
+        {
+         
+            var dirty_countries = _context.Countries
+                    .Select(c => new DirtyCountry
+                    {
+                        CountryID = c.CountryID,
+                        Name = c.Name,
+                        TotalDirtyConsumption = c.EnergyBalance.Where(ec => ec.Energy.EcologyDamage > 3).Sum(ec => ec.Consumption),
+                        Balance = c.EnergyBalance.Where(ec => ec.Energy.EcologyDamage > 3)
+                        .Select(ec => new DirtyCard
+                        {
+                            EnergyType = ec.Energy.Type,
+                            DirtyConsumption = ec.Consumption,
+                        })
+
+                    }).OrderByDescending(c => c.TotalDirtyConsumption);
+            return dirty_countries;
+        }
     }
 }
