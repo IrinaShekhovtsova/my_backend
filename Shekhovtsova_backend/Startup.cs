@@ -22,7 +22,7 @@ namespace Shekhovtsova_backend
 {
     public class Startup
     {
-        public ICountry CountryService { get; private set; }
+        public ICountryService CountryService { get; private set; }
         public IEnergyCard EnergyCardService { get; private set; }
 
         public IUser UserService { get; private set; }
@@ -63,7 +63,7 @@ namespace Shekhovtsova_backend
             services.AddDbContext<AuthContext>(options =>
     options.UseSqlServer(Configuration.GetConnectionString("AuthContext")));
 
-            services.AddScoped(typeof(ICountry), typeof(CountryService));
+            services.AddScoped(typeof(ICountryService), typeof(CountryService));
             services.AddScoped(typeof(IEnergyCard), typeof(EnergyCardService));
             services.AddScoped(typeof(IUser), typeof(UserService));
         }

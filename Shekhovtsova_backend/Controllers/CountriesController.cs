@@ -18,9 +18,9 @@ namespace Shekhovtsova_backend.Controllers
     public class CountriesController : ControllerBase
     {
         private readonly AuthContext _context;
-        private readonly ICountry countryService;
+        private readonly ICountryService countryService;
 
-        public CountriesController(AuthContext context, ICountry service)
+        public CountriesController(AuthContext context, ICountryService service)
         {
             _context = context;
             countryService = service;
@@ -104,7 +104,11 @@ namespace Shekhovtsova_backend.Controllers
         {
             return countryService.GetImporters(type).ToList();
         }
-    
+        //public List<CountryActivity> GetImporters(int type)
+        //{
+        //    return countryService.GetImporters(type).ToList();
+        //}
+
 
 
         // GET: api/Countries/5

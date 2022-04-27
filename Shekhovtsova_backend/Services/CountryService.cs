@@ -9,7 +9,7 @@ using Microsoft.EntityFrameworkCore;
 
 namespace Shekhovtsova_backend.Services
 {
-    public class CountryService : ICountry
+    public class CountryService : ICountryService
     {
         private readonly AuthContext _context;
 
@@ -111,6 +111,7 @@ namespace Shekhovtsova_backend.Services
         }
 
         public IEnumerable<CountryActivity> GetImporters(EnergyType type)
+
         {
             List<Country> countries = _context.Countries
                 .Include(c => c.EnergyBalance)
